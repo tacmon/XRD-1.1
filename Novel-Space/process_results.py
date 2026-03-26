@@ -45,7 +45,7 @@ def process_results(input_file, output_file):
         print("No tags found in the 'Predicted phases' column.")
         return
     
-    # 2. Let the user pick one tag
+    # 2. Let the user pick multiple tags
     sorted_tags = sorted(list(all_tags))
     print("\nAvailable tags in the CSV:")
     for i, tag in enumerate(sorted_tags, 1):
@@ -53,17 +53,20 @@ def process_results(input_file, output_file):
     
     while True:
         try:
-            choice = input("\nPlease select the number of the 'Main Substance' (主要物质): ")
-            choice_idx = int(choice) - 1
-            if 0 <= choice_idx < len(sorted_tags):
-                main_substance = sorted_tags[choice_idx]
+            choice_str = input("\nPlease select the numbers of the 'Main Substances' (主要物质, separated by commas or spaces): ")
+            # Split by comma or space and convert to indices
+            selections = [int(x.strip()) - 1 for x in re.split(r'[,\s]+', choice_str) if x.strip()]
+            
+            if all(0 <= idx < len(sorted_tags) for idx in selections) and selections:
+                main_substances = set(sorted_tags[idx] for idx in selections)
                 break
             else:
-                print(f"Invalid choice. Please enter a number between 1 and {len(sorted_tags)}.")
+                print(f"Invalid choices. Please enter numbers between 1 and {len(sorted_tags)}.")
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print("Invalid input. Please enter numbers.")
     
-    print(f"\nProcessing with Main Substance: '{main_substance}'")
+    selected_list = sorted(list(main_substances))
+    print(f"\nProcessing with Main Substances: {selected_list}")
     
     # 3. Process the data
     processed_data = []
@@ -75,20 +78,20 @@ def process_results(input_file, output_file):
         final_phase = "未识别"
         final_confidence = ""
         
-        if main_substance in phases:
-            main_idx = phases.index(main_substance)
-            main_conf = confidences[main_idx]
+        if phases:
+            # Find the substance with the absolute highest confidence in this row
+            max_conf = -1
+            max_phase = None
             
-            # Condition: Confidence > 50% AND no other tag has higher confidence
-            is_highest = True
-            for conf in confidences:
-                if conf > main_conf:
-                    is_highest = False
-                    break
+            for p, c in zip(phases, confidences):
+                if c > max_conf:
+                    max_conf = c
+                    max_phase = p
             
-            if main_conf > 50 and is_highest:
-                final_phase = main_substance
-                final_confidence = main_conf
+            # Check if this "winner" is one of the main substances and > 50%
+            if max_phase in main_substances and max_conf > 50:
+                final_phase = max_phase
+                final_confidence = max_conf
         
         processed_data.append({
             'Filename': df.iloc[i]['Filename'],

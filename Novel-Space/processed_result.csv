@@ -1,69 +1,69 @@
 ﻿Filename,Predicted phases,Confidence
-1.txt,AlN_216,90.0
-10.txt,AlN_216,58.0
-2.txt,AlN_216,96.0
-3.txt,AlN_216,96.5
-4.txt,AlN_216,96.5
-6.txt,AlN_216,52.5
-7.txt,AlN_216,56.0
-8.txt,AlN_216,51.5
-9.txt,AlN_216,60.0
-A-1_NbSe2-mental-2.txt,AlN_216,67.5
-AgCr2Te4-J113-2.txt,未识别,
-Al2O3_10_120_0.01_1_background_Pr.txt,AlN_216,97.0
-AlN_1.txt,AlN_216,58.0
-AlN_10.txt,AlN_216,53.0
-AlN_11.txt,AlN_216,57.5
-AlN_12.txt,AlN_216,59.5
-AlN_2.txt,AlN_216,52.5
-AlN_3.txt,AlN_216,52.0
-AlN_4.txt,AlN_216,61.5
-AlN_5.txt,AlN_216,58.5
-AlN_6.txt,AlN_216,54.5
-AlN_7.txt,AlN_216,54.5
-AlN_8.txt,AlN_216,58.0
-AlN_9.txt,AlN_216,54.0
-BiSiTe3-1.txt,未识别,
-BiSiTe3-2.txt,AlN_216,58.0
-BiSiTe3-3.txt,AlN_216,59.0
-BiSiTe3-4.txt,AlN_216,52.0
-BiSiTe3-5.txt,AlN_216,54.0
-BiSiTe3-6.txt,AlN_216,54.0
-BiSiTe3-7.txt,AlN_216,56.5
-BiSiTe3-8.txt,AlN_216,57.5
-C034_FeZrT5_2_10_90_0.01_Pr_1.txt,未识别,
-C63_FeMoTe_2_5_90_0.01_GK.txt,未识别,
-Cr5Te8-powder.txt,未识别,
+1.txt,未识别,
+10.txt,未识别,
+2.txt,未识别,
+3.txt,未识别,
+4.txt,未识别,
+6.txt,未识别,
+7.txt,未识别,
+8.txt,未识别,
+9.txt,未识别,
+A-1_NbSe2-mental-2.txt,未识别,
+AgCr2Te4-J113-2.txt,CrSiTe3_148,73.0
+Al2O3_10_120_0.01_1_background_Pr.txt,未识别,
+AlN_1.txt,未识别,
+AlN_10.txt,未识别,
+AlN_11.txt,未识别,
+AlN_12.txt,未识别,
+AlN_2.txt,未识别,
+AlN_3.txt,未识别,
+AlN_4.txt,未识别,
+AlN_5.txt,未识别,
+AlN_6.txt,未识别,
+AlN_7.txt,未识别,
+AlN_8.txt,未识别,
+AlN_9.txt,未识别,
+BiSiTe3-1.txt,CrSiTe3_148,54.0
+BiSiTe3-2.txt,未识别,
+BiSiTe3-3.txt,未识别,
+BiSiTe3-4.txt,未识别,
+BiSiTe3-5.txt,未识别,
+BiSiTe3-6.txt,未识别,
+BiSiTe3-7.txt,未识别,
+BiSiTe3-8.txt,未识别,
+C034_FeZrT5_2_10_90_0.01_Pr_1.txt,CrSiTe3_148,64.5
+C63_FeMoTe_2_5_90_0.01_GK.txt,CrSiTe3_148,54.5
+Cr5Te8-powder.txt,CrSiTe3_148,93.0
 CrAlTe-1.txt,未识别,
-CrAlTe-2.txt,未识别,
-CrAlTe-3.txt,未识别,
-CrSiTe3  PURE FZ40.txt,未识别,
-CrSiTe3 B027.txt,未识别,
-CrSiTe3 B028.txt,未识别,
-CrSiTe3 pure B025-2.txt,未识别,
-CrSiTe3 pure B025-3.txt,未识别,
-CrSiTe3 pure B025.txt,未识别,
-CrSiTe3_1.txt,未识别,
-CrSiTe3_148_Theoretical.txt,未识别,
-CrSiTe3_180_10_70_0.01_txt.txt,未识别,
-CrSiTe3_2.txt,未识别,
+CrAlTe-2.txt,CrSiTe3_148,63.0
+CrAlTe-3.txt,CrSiTe3_148,54.0
+CrSiTe3  PURE FZ40.txt,CrSiTe3_148,60.5
+CrSiTe3 B027.txt,CrSiTe3_148,59.0
+CrSiTe3 B028.txt,CrSiTe3_148,61.0
+CrSiTe3 pure B025-2.txt,CrSiTe3_148,55.5
+CrSiTe3 pure B025-3.txt,CrSiTe3_148,59.0
+CrSiTe3 pure B025.txt,CrSiTe3_148,58.5
+CrSiTe3_1.txt,CrSiTe3_148,63.5
+CrSiTe3_148_Theoretical.txt,CrSiTe3_148,100.0
+CrSiTe3_180_10_70_0.01_txt.txt,CrSiTe3_148,55.5
+CrSiTe3_2.txt,CrSiTe3_148,57.0
 CrSiTe3_300_10_80_0.01.txt,未识别,
-CrSiTe3_360_10_70_0.01_txt.txt,未识别,
-CrSiTe3_back_10_70_0.01_Pr_1.txt,未识别,
-CrSiTe3_rotation_0.01_10_80_0.01.txt,未识别,
-CrTe2_JBX_J197_CT.txt,未识别,
-DC3.txt,AlN_216,58.0
-DC4.txt,AlN_216,56.0
-DC5.txt,AlN_216,57.0
-FeS_5_90_0.01_J05-右.txt,未识别,
-FeTe2_5_90_0.01_GK.txt,未识别,
-J193_ZnIn2Te4.txt,未识别,
-J193_ZnIn2Te4_2.txt,未识别,
-J215_ZnIn2Te4.txt,未识别,
-RF3.txt,AlN_216,51.0
-RF4.txt,AlN_216,56.0
-RF5.txt,AlN_216,54.5
-Si2Te3.txt,未识别,
-SiTe2_164_Theoretical.txt,未识别,
-SmS-5-90-0.02.txt,未识别,
-VZrSe_5_90_0.01_GK.txt,未识别,
+CrSiTe3_360_10_70_0.01_txt.txt,CrSiTe3_148,60.0
+CrSiTe3_back_10_70_0.01_Pr_1.txt,CrSiTe3_148,57.5
+CrSiTe3_rotation_0.01_10_80_0.01.txt,CrSiTe3_148,62.5
+CrTe2_JBX_J197_CT.txt,CrSiTe3_148,86.5
+DC3.txt,未识别,
+DC4.txt,未识别,
+DC5.txt,未识别,
+FeS_5_90_0.01_J05-右.txt,CrSiTe3_148,60.0
+FeTe2_5_90_0.01_GK.txt,CrSiTe3_148,53.5
+J193_ZnIn2Te4.txt,CrSiTe3_148,65.0
+J193_ZnIn2Te4_2.txt,CrSiTe3_148,64.5
+J215_ZnIn2Te4.txt,CrSiTe3_148,71.0
+RF3.txt,未识别,
+RF4.txt,未识别,
+RF5.txt,未识别,
+Si2Te3.txt,CrSiTe3_148,56.5
+SiTe2_164_Theoretical.txt,CrSiTe3_148,95.0
+SmS-5-90-0.02.txt,CrSiTe3_148,95.0
+VZrSe_5_90_0.01_GK.txt,CrSiTe3_148,95.5

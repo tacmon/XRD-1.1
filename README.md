@@ -104,6 +104,23 @@ python make_gifs.py
 ```
 - **输出**：生成的 GIF 文件保存在 `figure/real_data/gif/` 目录下。
 
+### (9) `process_results.py`
+**功能**：对 `run_CNN.py` 生成的 `result.csv` 进行后处理。允许用户选择一个或多个“主要物质”，脚本将筛选出每一行中置信度最高且大于 50% 的物质。如果最高置信度的物质属于“主要物质”列表，则保留；否则标记为“未识别”。
+**用法**：
+```bash
+python process_results.py
+```
+- **交互**：运行后会列出所有出现的标签，输入对应编号（多个编号用逗号或空格分隔）选择主要物质。
+- **输出**：简化后的结果保存至 `processed_result.csv`。
+
+### (10) `extract_ranges.py`
+**功能**：快速遍历 `Spectra/` 目录下的所有数据文件，提取由于原始实验设置而导致的 2-theta 扫描角度范围（最小值和最大值）。这有助于在运行 `run_CNN.py` 前核实数据是否覆盖了模型所需的角度区间。
+**用法**：
+```bash
+python extract_ranges.py
+```
+- **输出**：结果保存至 `angle_ranges.csv`。
+
 ## 4. 典型工作流示例
 
 为了确保系统正确运行，建议遵循以下流程：
@@ -116,11 +133,13 @@ python make_gifs.py
 6. **分析与可视化**：
    - 运行 `python plot_real_spectra.py` 预备并导出所有待测数据的曲线。
    - 运行 `python make_gifs.py` 合成动态图，直观对比识别效果。
-7. **数据提取（可选）**：运行 `python extract_sample_from_npy.py` 提取训练集内样本供对比分析。
+7. **结果后处理**：运行 `python process_results.py` 筛选特定的主要物质，生成更易读的 `processed_result.csv`。
+8. **数据提取（可选）**：运行 `python extract_sample_from_npy.py` 提取训练集内样本供对比分析。
 
 ---
 > [!IMPORTANT]
 > 如果遇到问题，请确保在“次级目录”运行，即 `Novel-Space` 目录或者 `Example` 目录，而不是项目根目录。
+> 若遇到 `AssertionError: Measured spectrum does not span the specified two-theta range!`，请使用 `extract_ranges.py` 核查您的数据范围并相应调整 `--min_angle` 和 `--max_angle` 参数。
 
 
 ## 5. 关联项目
