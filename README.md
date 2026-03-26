@@ -16,6 +16,15 @@ pip install -e .
 cd Novel-Space
 ```
 
+### 1.1 环境初始化与软链接设置
+为了方便管理不同的数据集和输出路径，项目提供了一个自动化脚本 `setup_links.sh`。该脚本会引导您设置 `Spectra`、`All_CIFs` 和 `figure/real_data` 的软链接。
+
+**运行方法**：
+```bash
+./setup_links.sh
+```
+按照提示选择对应的目标文件夹（例如 `soft_link/Spectra_train`）即可完成配置。
+
 ## 2. 核心脚本介绍
 
 ### (1) `download_mp.py`
@@ -112,4 +121,12 @@ python make_gifs.py
 ---
 > [!IMPORTANT]
 > 如果遇到问题，请确保在“次级目录”运行，即 `Novel-Space` 目录或者 `Example` 目录，而不是项目根目录。
+
+
+## 5. 关联项目
+
+本项目是系列工具的一部分，您可以点击下方链接跳转到其他版本：
+
+- [XRD-1.0](https://github.com/tacmon/XRD-1.0)：初始版本，包含完整的辅助脚本和数据处理工具。
+- [XRD-1.1](https://github.com/tacmon/XRD-1.1)：（当前项目）精简版，优化了脚本结构并增加了环境自动初始化工作流。
 
