@@ -3,8 +3,8 @@
 # Configuration
 # This script assumes it is run from the 'Novel-Space/' directory
 BASE_DIR="soft_link"
-SPECTRUM_BASE="$BASE_DIR"
-CIF_BASE="$BASE_DIR"
+SPECTRUM_BASE="$BASE_DIR/Spectra"
+CIF_BASE="$BASE_DIR/All_CIFs"
 FIGURE_BASE="$BASE_DIR/figure"
 
 echo "=== XRD-AutoAnalyzer-PyTorch Environment Setup ==="
@@ -59,13 +59,13 @@ SPECTRA_TARGET=$(select_from_dir "$SPECTRUM_BASE" "Select Spectra source directo
 # 2. Setup All_CIFs link
 echo "" >&2
 echo "--- Step 2: Setting up 'All_CIFs' link ---" >&2
-CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "All_CIFs")
+CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "All_CIFs_AlN_4_types")
 
 # 3. Setup figure/real_data link
 echo "" >&2
 echo "--- Step 3: Setting up 'figure/real_data' link ---" >&2
 FIGURE_TARGET=$(select_from_dir "$FIGURE_BASE" "Select figure/real_data source directory" "Spectra_train")
-
+echo $FIGURE_TARGET
 # Confirmation
 echo ""
 echo "Proposed Links:"
