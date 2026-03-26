@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+*.pth
+Novel-Space/temp/
+Novel-Space/figure/real_data/
+Novel-Space/angle_ranges.csv
+Novel-Space/result.csv
+Novel-Space/result_processed.csv
+.DS_Store
