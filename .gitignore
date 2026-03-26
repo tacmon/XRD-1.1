@@ -3,6 +3,7 @@ __pycache__/
 *$py.class
 .ipynb_checkpoints/
 *.pth
+*.npy
 Novel-Space/temp/
 Novel-Space/figure/real_data/
 Novel-Space/angle_ranges.csv
