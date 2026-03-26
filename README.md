@@ -130,3 +130,4 @@ python make_gifs.py
 - [XRD-1.0](https://github.com/tacmon/XRD-1.0)：初始版本，包含完整的辅助脚本和数据处理工具。
 - [XRD-1.1](https://github.com/tacmon/XRD-1.1)：（当前项目）精简版，优化了脚本结构并增加了环境自动初始化工作流。
 
+
