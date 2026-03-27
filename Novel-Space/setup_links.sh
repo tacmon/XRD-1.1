@@ -27,12 +27,20 @@ select_from_dir() {
     local options=($(find "$dir" -maxdepth 1 -mindepth 1 -type d -exec basename {} \;))
     
     if [ ${#options[@]} -eq 0 ]; then
-        read -p "$prompt (no directories found, manual input): " result >&2
-        echo "$result"
+        echo "No directories found in $dir." >&2
+        read -p "$prompt (manual input, or -1 to create): " choice >&2
+        if [[ "$choice" == "-1" ]]; then
+            read -p "Enter new directory name: " new_name >&2
+            mkdir -p "$dir/$new_name"
+            echo "$dir/$new_name"
+        else
+            echo "$choice"
+        fi
         return
     fi
 
     echo "Available options in $dir:" >&2
+    echo "  [-1] Create new empty directory" >&2
     local default_index=0
     for i in "${!options[@]}"; do
         if [[ "${options[$i]}" == "$default_item" ]]; then
@@ -41,10 +49,14 @@ select_from_dir() {
         printf "  [%d] %s\n" "$i" "${options[$i]}" >&2
     done
 
-    read -p "$prompt [default index: $default_index]: " choice >&2
+    read -p "$prompt [default index: $default_index, or -1 to create]: " choice >&2
     if [[ -z "$choice" ]]; then choice=$default_index; fi
 
-    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -lt "${#options[@]}" ]; then
+    if [[ "$choice" == "-1" ]]; then
+        read -p "Enter new directory name: " new_name >&2
+        mkdir -p "$dir/$new_name"
+        echo "$dir/$new_name"
+    elif [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -lt "${#options[@]}" ]; then
         echo "$dir/${options[$choice]}"
     else
         echo "$choice"
