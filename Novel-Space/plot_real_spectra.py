@@ -18,7 +18,7 @@ os.environ["OPENBLAS_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
 import numpy as np
-import joblib
+# import joblib  # No longer needed as constants are hardcoded
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -27,9 +27,26 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 
 def load_spectrum(filepath, angle_grid):
     """
-    与 run_xrd_model.py 相同的读取和预处理逻辑
+    Revised loading logic consistent with run_CNN.py:
+    - Supports comments (* and #)
+    - Robust fallback for manual parsing
+    - Encoding safe (errors='ignore')
     """
-    data = np.loadtxt(filepath)
+    try:
+        data = np.loadtxt(filepath, comments=('*', '#'))
+    except Exception:
+        # Fallback to robust parsing for files with non-standard headers
+        raw_data = []
+        with open(filepath, 'r', errors='ignore') as f:
+            for line in f:
+                try:
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        x_val, y_val = float(parts[0]), float(parts[1])
+                        raw_data.append([x_val, y_val])
+                except (ValueError, IndexError):
+                    continue
+        data = np.array(raw_data)
 
     # 兼容单列（仅强度）和双列（角度 + 强度）格式
     if data.ndim == 1:
@@ -63,30 +80,26 @@ def main():
     os.chdir(script_dir)
     
     spectra_dir = "Spectra"
-    model_path = "Model_ML.pkl"
     out_dir = os.path.join("figure", "real_data")
     
     if not os.path.exists(spectra_dir):
         print(f"[ERROR] 找不到目录: {spectra_dir}")
         return
         
-    if not os.path.exists(model_path):
-        print(f"[ERROR] 找不到模型 {model_path}，无法获取角度基准网格。")
-        return
-        
     os.makedirs(out_dir, exist_ok=True)
     
-    print(f"[INFO] 正在获取基准网格配置 {model_path} ...")
-    bundle = joblib.load(model_path)
-    min_angle = bundle['min_angle']
-    max_angle = bundle['max_angle']
-    n_points = bundle['n_points']
+    # Hardcoded基准网格配置 (不再依赖 Model_ML.pkl)
+    min_angle = 20.0
+    max_angle = 60.0
+    n_points = 4501
     
     angle_grid = np.linspace(min_angle, max_angle, n_points)
     
+    # 支持各种后缀名 (.txt, .xy, .gk)
+    valid_exts = ['.txt', '.xy', '.gk']
     spectrum_files = sorted([
         f for f in os.listdir(spectra_dir)
-        if f.lower().endswith('.txt') or f.lower().endswith('.xy')
+        if any(f.lower().endswith(ext) for ext in valid_exts) and not f.startswith('.')
     ])
     
     print(f"[INFO] 找到 {len(spectrum_files)} 个真实光谱文件，开始画图...")
@@ -107,7 +120,9 @@ def main():
             ax.set_title(f'Real Measured XRD: {fname} (Interpolated)')
             
             plt.tight_layout()
-            out_path = os.path.join(out_dir, fname.replace('.txt', '.png').replace('.xy', '.png'))
+            # 确保输出文件后缀为 .png
+            base_name = os.path.splitext(fname)[0]
+            out_path = os.path.join(out_dir, base_name + '.png')
             fig.savefig(out_path, dpi=120)
             plt.close(fig)
             

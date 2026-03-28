@@ -128,7 +128,22 @@ class SpectrumAnalyzer(object):
         """
 
         ## Load data
-        data = np.loadtxt('%s/%s' % (self.spectra_dir, self.spectrum_fname))
+        # Try loading with common comment characters
+        try:
+            data = np.loadtxt('%s/%s' % (self.spectra_dir, self.spectrum_fname), comments=('*', '#'))
+        except Exception:
+            # Use errors='ignore' to handle non-UTF-8 characters (like degree symbols in different encodings)
+            raw_data = []
+            with open('%s/%s' % (self.spectra_dir, self.spectrum_fname), 'r', errors='ignore') as f:
+                for line in f:
+                    try:
+                        parts = line.split()
+                        if len(parts) >= 2:
+                            x_val, y_val = float(parts[0]), float(parts[1])
+                            raw_data.append([x_val, y_val])
+                    except (ValueError, IndexError):
+                        continue
+            data = np.array(raw_data)
         x = data[:, 0]
         y = data[:, 1]
 

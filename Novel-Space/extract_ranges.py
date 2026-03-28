@@ -3,14 +3,17 @@ import csv
 
 def extract_angle_ranges(directory, output_file):
     results = []
-    files = [f for f in os.listdir(directory) if f.endswith('.txt')]
+    # Support various extensions like .txt, .xy, .gk while ignoring hidden files
+    valid_exts = ['.txt', '.xy', '.gk']
+    files = [f for f in os.listdir(directory) if any(f.endswith(ext) for ext in valid_exts) and not f.startswith('.')]
     files.sort()
 
     for filename in files:
         filepath = os.path.join(directory, filename)
         angles = []
         try:
-            with open(filepath, 'r') as f:
+            # Use errors='ignore' to handle non-UTF-8 characters in headers
+            with open(filepath, 'r', errors='ignore') as f:
                 for line in f:
                     parts = line.split()
                     if len(parts) >= 1:
