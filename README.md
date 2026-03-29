@@ -35,11 +35,17 @@ cd Novel-Space
 ```
 这会自动创建指向 `soft_link/` 的 `All_CIFs`、`Spectra` 和 `figure` 等符号链接，并确保它们指向干净、独立的实验区。
 
-### Step 3: 开始数据采集推理
-环境初始化后，您可以按顺序执行：
-1. **下载结构**：`python src/download_mp.py`
-2. **生成参考**：`python src/construct_xrd_model.py`
-3. **运行模型**：`python src/run_CNN.py`
+### Step 3: 开始数据采集与训练
+一键启动训练流程（包含交互式结构下载）：
+```bash
+./train.sh
+```
+
+### Step 4: 运行推理
+确保 `Spectra/` 目录中有待测数据，然后执行：
+```bash
+./inference.sh
+```
 
 ---
 

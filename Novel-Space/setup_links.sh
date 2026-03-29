@@ -95,13 +95,19 @@ fi
 
 # --- Resolution of Targets ---
 if [ "$INIT_MODE" = true ]; then
-    # 1. Clear temp directories
-    echo "  [CLEAN] Clearing contents of temp directories in soft_link/..."
+    # 1. Ensure base directories and temp folders exist
+    echo "  [INIT] Ensuring directory structure exists in $BASE_DIR/..."
+    mkdir -p "$SPECTRUM_BASE/temp"
+    mkdir -p "$CIF_BASE/temp"
+    mkdir -p "$FIGURE_BASE/temp"
+
+    # 2. Clear temp directories
+    echo "  [CLEAN] Clearing contents of temp directories..."
     rm -rf "$SPECTRUM_BASE/temp"/*
     rm -rf "$CIF_BASE/temp"/*
     rm -rf "$FIGURE_BASE/temp"/*
     
-    # 2. Set targets to temp
+    # 3. Set targets to temp
     SPECTRA_TARGET="$SPECTRUM_BASE/temp"
     CIF_TARGET="$CIF_BASE/temp"
     FIGURE_TARGET="$FIGURE_BASE/temp"

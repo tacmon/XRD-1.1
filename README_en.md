@@ -35,11 +35,17 @@ cd Novel-Space
 ```
 This will automatically create symbolic links such as `All_CIFs`, `Spectra`, and `figure` pointing to the `soft_link/` storage, ensuring a clean and independent experimental area.
 
-### Step 3: Start Data Acquisition and Inference
-Once the environment is initialized, you can execute the following in order:
-1. **Download Structures**: `python src/download_mp.py`
-2. **Construct Reference/Model**: `python src/construct_xrd_model.py`
-3. **Run Inference**: `python src/run_CNN.py`
+### Step 3: Start Data Acquisition and Training
+Launch the training workflow (including interactive download) with one click:
+```bash
+./train.sh
+```
+
+### Step 4: Run Inference
+Ensure your experimental data is in the `Spectra/` directory, then run:
+```bash
+./inference.sh
+```
 
 ---
 
