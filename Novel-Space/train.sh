@@ -13,8 +13,30 @@ if [ ! -d "$SRC_DIR" ]; then
     exit 1
 fi
 
-# 2. Cleanup current CIFs
-echo "Step 1: Cleaning up current dataset in All_CIFs/..."
+# 2. Cleanup current CIFs (Safety Check Included)
+echo "Step 1: Checking All_CIFs directory for safe cleanup..."
+if [ -L "All_CIFs" ]; then
+    TARGET_PATH=$(readlink -f All_CIFs)
+    echo "  [INFO] All_CIFs is linked to: $TARGET_PATH"
+    
+    # Check if we are pointing to the 'temp' directory
+    if [[ "$TARGET_PATH" != *"temp"* ]]; then
+        echo -e "\n\033[0;31m[CRITICAL SAFETY BREACH DETECTED]\033[0m"
+        echo "The current All_CIFs points to a PRODUCTION dataset: $TARGET_PATH"
+        echo "Automatic wiping is FORBIDDEN to protect your data."
+        echo "If you really want to clear this dataset, please do it manually or switch to 'temp'."
+        exit 1
+    fi
+    
+    # Mandatory confirmation for the temp folder
+    echo -e "\n\033[0;33m[WARNING]\033[0m About to wipe all files in $TARGET_PATH."
+    read -p "Are you absolutely sure you want to proceed? [y/N]: " confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Cleanup aborted by user. Training stopped."
+        exit 1
+    fi
+fi
+
 rm -rf All_CIFs/*
 echo "  [OK] All_CIFs directory is now empty."
 

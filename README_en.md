@@ -47,6 +47,12 @@ Ensure your experimental data is in the `Spectra/` directory, then run:
 ./inference.sh
 ```
 
+### Step 5: Auxiliary Toolbox
+Use the integrated toolbox for post-processing, plotting, or generating animations:
+```bash
+./tools.sh
+```
+
 ---
 
 ## 3. Environment Management: `setup_links.sh`

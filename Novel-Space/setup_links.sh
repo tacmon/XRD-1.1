@@ -131,8 +131,18 @@ else
     echo ""
     echo "Proposed Links:"
     echo "  Spectra         -> $SPECTRA_TARGET"
-    echo "  All_CIFs        -> $CIF_TARGET"
+    if [[ "$CIF_TARGET" != *"temp"* ]]; then
+        echo -e "  All_CIFs        -> $CIF_TARGET \033[0;31m[PRODUCTION DATASET - CAUTION]\033[0m"
+    else
+        echo "  All_CIFs        -> $CIF_TARGET"
+    fi
     echo "  figure/real_data -> $FIGURE_TARGET"
+
+    if [[ "$CIF_TARGET" != *"temp"* ]]; then
+        echo ""
+        echo -e "\033[0;33m[SAFETY NOTE]\033[0m: Linking to a production dataset means scripts like train.sh"
+        echo "              will treat it as an active workspace. Deletions will follow the link."
+    fi
     echo ""
     read -p "Apply these changes? [y/N]: " confirm
     if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then

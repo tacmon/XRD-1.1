@@ -48,7 +48,7 @@ echo ""
 echo "Step 2: Starting Phase Identification (CNN Inference)..."
 echo "  (Using combined XRD + PDF analysis, generating plots and result.csv)"
 
-python3 "$SRC_DIR/run_CNN.py" --inc_pdf --plot --weights
+python3 "$SRC_DIR/run_CNN.py" --inc_pdf
 
 if [ $? -eq 0 ]; then
     echo ""

@@ -47,6 +47,12 @@ cd Novel-Space
 ./inference.sh
 ```
 
+### Step 5: 辅助工具集成
+使用辅助工具箱进行后处理、绘图或生成动画：
+```bash
+./tools.sh
+```
+
 ---
 
 ## 3. 环境管理：`setup_links.sh`
