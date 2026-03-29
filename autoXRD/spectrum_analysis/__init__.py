@@ -144,6 +144,11 @@ class SpectrumAnalyzer(object):
                     except (ValueError, IndexError):
                         continue
             data = np.array(raw_data)
+        
+        # Validate data shape before indexing
+        if data.ndim < 2 or data.shape[1] < 2:
+            raise ValueError("Pattern contains no valid numeric data or is corrupted.")
+
         x = data[:, 0]
         y = data[:, 1]
 
@@ -415,12 +420,12 @@ class SpectrumAnalyzer(object):
         x_obs = xs = np.linspace(self.min_angle, self.max_angle, 4501)
         y_obs = np.array(orig_y)
 
-        with open('temp/%s' % self.spectrum_fname, 'w+') as f:
+        with open('temp/%s' % os.path.basename(self.spectrum_fname), 'w+') as f:
             for xv, yv in zip(x_obs, y_obs):
                 f.write('%s %s\n' % (xv, yv + 1e-6))
 
         result = do_refinement_no_saving(
-            pattern_path=Path('temp/%s' % self.spectrum_fname),
+            pattern_path=Path('temp/%s' % os.path.basename(self.spectrum_fname)),
             phase_paths=[
                 Path('%s/%s' % (self.ref_dir, predicted_cmpd))
             ],
@@ -678,11 +683,22 @@ class PhaseIdentifier(object):
             confidences: the associated confidence with the prediction above
         """
 
-        # Ignore hidden files that sometimes appear (like .DS_Store on Mac)
+        # Ignore hidden files and recursively scan directories
         reference_phases = [fname for fname in sorted(os.listdir(self.ref_dir)) if fname[0] != '.']
 
-        spectrum_filenames = os.listdir(self.spectra_dir)
-        spectrum_filenames = [fname for fname in spectrum_filenames if fname[0] != '.']
+        # Recursively scan spectra directory
+        spectrum_filenames = []
+        for root, dirs, files in os.walk(self.spectra_dir):
+            for fname in files:
+                if fname[0] != '.':
+                    full_path = os.path.join(root, fname)
+                    # Support non-empty files only
+                    if os.path.isfile(full_path) and os.path.getsize(full_path) > 0:
+                        rel_dir = os.path.relpath(root, self.spectra_dir)
+                        if rel_dir == '.':
+                            spectrum_filenames.append(fname)
+                        else:
+                            spectrum_filenames.append(os.path.join(rel_dir, fname))
 
         if self.parallel:
             with Manager() as manager:
@@ -725,7 +741,12 @@ class PhaseIdentifier(object):
             self.min_conf, wavelen=self.wavelen, min_angle=self.min_angle, max_angle=self.max_angle,
             model_path=self.model_path, is_pdf=self.is_pdf)
 
-        mixtures, confidences, backup_mixtures, scalings, spectra = spec_analysis.suspected_mixtures
+        try:
+            mixtures, confidences, backup_mixtures, scalings, spectra = spec_analysis.suspected_mixtures
+        except Exception as e:
+            # Silent skip for faulty files
+            print(f"  [SKIP] {spectrum_fname}: {str(e)}")
+            return [spectrum_fname, ['None'], [0.0], ['None'], [0.0], [[]]]
 
         # If classification is non-trival, identify most probable mixture
         if any(confidences):

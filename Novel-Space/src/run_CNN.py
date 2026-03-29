@@ -82,8 +82,13 @@ if __name__ == '__main__':
         if '--refined_phases_dir' in arg:
             refined_phases_dir = str(arg.split('=')[1])
 
-    # Make sure at least one spectrum is provided
-    assert len(os.listdir('Spectra')) > 0, 'Please provide at least one pattern in the Spectra directory.'
+    # Make sure at least one spectrum file is provided (recursive scan)
+    has_files = False
+    for root, dirs, files in os.walk('Spectra'):
+        if any(f[0] != '.' for f in files):
+            has_files = True
+            break
+    assert has_files, 'Please provide at least one pattern in the Spectra directory.'
 
     # Keep results separate
     results = {'XRD': {}, 'PDF': {}}

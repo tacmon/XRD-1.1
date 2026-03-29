@@ -562,7 +562,10 @@ def main(spectra_directory, spectrum_fname, predicted_phases, scale_factors, red
             plt.ylabel('Intensity', fontsize=16, labelpad=12)
 
             if save:
-                savename = '%s.png' % '.'.join(spectrum_fname.split('.')[:-1])
+                path_base = os.path.splitext(spectrum_fname)[0]
+                savename = '%s.png' % path_base
+                if os.path.dirname(savename):
+                    os.makedirs(os.path.dirname(savename), exist_ok=True)
                 plt.tight_layout()
                 plt.savefig(savename, dpi=400)
                 plt.close()
@@ -639,7 +642,10 @@ def main(spectra_directory, spectrum_fname, predicted_phases, scale_factors, red
                 plt.ylabel('G(r)', fontsize=16, labelpad=12)
 
                 if save:
-                    savename = '%s_PDF.png' % spectrum_fname.split('.')[0]
+                    path_base = os.path.splitext(spectrum_fname)[0]
+                    savename = '%s_PDF.png' % path_base
+                    if os.path.dirname(savename):
+                        os.makedirs(os.path.dirname(savename), exist_ok=True)
                     plt.tight_layout()
                     plt.savefig(savename, dpi=400)
                     plt.close()
