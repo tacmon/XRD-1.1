@@ -14,9 +14,14 @@ if root_dir not in sys.path:
     sys.path.append(root_dir)
 
 from mp_api.client import MPRester
+from dotenv import load_dotenv
+
+# Load environment variables from .env if it exists
+load_dotenv()
 
 # 将 YOUR_API_KEY 替换为您在官网获取的真实秘钥
-api_key = "NqbvBekB6TBXn9dG5smLjaAJhx9fwkPG"
+# 从 .env 文件或环境变量读取
+api_key = os.getenv("MP_API_KEY")
 material_id = "mp-" + input("输入ID：") # 以锐钛矿 TiO2 为例
 
 # 连接到 MP 数据库

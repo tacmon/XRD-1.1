@@ -5,8 +5,12 @@ __pycache__/
 *.pth
 *.npy
 Novel-Space/temp/
-Novel-Space/figure/real_data/
+Novel-Space/All_CIFs/
+Novel-Space/Spectra/
+Novel-Space/figure/
 Novel-Space/angle_ranges.csv
 Novel-Space/result.csv
 Novel-Space/result_processed.csv
 .DS_Store
+.env
+**/ .env

@@ -109,17 +109,17 @@ else
     # 1. Setup Spectra link
     echo "" >&2
     echo "--- Step 1: Setting up 'Spectra' link ---" >&2
-    SPECTRA_TARGET=$(select_from_dir "$SPECTRUM_BASE" "Select Spectra source directory" "Spectra_train")
+    SPECTRA_TARGET=$(select_from_dir "$SPECTRUM_BASE" "Select Spectra source directory" "temp")
 
     # 2. Setup All_CIFs link
     echo "" >&2
     echo "--- Step 2: Setting up 'All_CIFs' link ---" >&2
-    CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "All_CIFs_AlN_4_types")
+    CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "temp")
 
     # 3. Setup figure/real_data link
     echo "" >&2
     echo "--- Step 3: Setting up 'figure/real_data' link ---" >&2
-    FIGURE_TARGET=$(select_from_dir "$FIGURE_BASE" "Select figure/real_data source directory" "Spectra_train")
+    FIGURE_TARGET=$(select_from_dir "$FIGURE_BASE" "Select figure/real_data source directory" "temp")
 
     # Confirmation
     echo ""
