@@ -63,89 +63,111 @@ select_from_dir() {
     fi
 }
 
-# 1. Setup Spectra link
-echo "" >&2
-echo "--- Step 1: Setting up 'Spectra' link ---" >&2
-SPECTRA_TARGET=$(select_from_dir "$SPECTRUM_BASE" "Select Spectra source directory" "Spectra_train")
-
-# 2. Setup All_CIFs link
-echo "" >&2
-echo "--- Step 2: Setting up 'All_CIFs' link ---" >&2
-CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "All_CIFs_AlN_4_types")
-
-# 3. Setup figure/real_data link
-echo "" >&2
-echo "--- Step 3: Setting up 'figure/real_data' link ---" >&2
-FIGURE_TARGET=$(select_from_dir "$FIGURE_BASE" "Select figure/real_data source directory" "Spectra_train")
-echo $FIGURE_TARGET
-# Confirmation
-echo ""
-echo "Proposed Links:"
-echo "  Spectra         -> $SPECTRA_TARGET"
-echo "  All_CIFs        -> $CIF_TARGET"
-echo "  figure/real_data -> $FIGURE_TARGET"
-echo ""
-read -p "Apply these changes? [y/N]: " confirm
-if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-    echo "Setup cancelled."
-    exit 0
+# --- Initialization Block ---
+INIT_MODE=false
+if [[ "$1" == "init" || "$1" == "--init" ]]; then
+    INIT_MODE=true
+    echo "[Mode: INITIALIZATION]"
 fi
 
-# Execution
+# --- Data Preservation (Save current Models/References before switching) ---
+if [ -L "All_CIFs" ]; then
+    CURRENT_CIF_TARGET=$(readlink "All_CIFs")
+    # Migrate Models if it's a non-empty directory
+    if [ -d "Models" ] && [ ! -L "Models" ]; then
+        if [ "$(ls -A Models 2>/dev/null)" ]; then
+            echo "  [INFO] Preserving Models to $CURRENT_CIF_TARGET/Models"
+            mkdir -p "$CURRENT_CIF_TARGET/Models"
+            mv Models/* "$CURRENT_CIF_TARGET/Models/" 2>/dev/null
+        fi
+        rm -rf Models
+    fi
+    # Migrate References if it's a non-empty directory
+    if [ -d "References" ] && [ ! -L "References" ]; then
+        if [ "$(ls -A References 2>/dev/null)" ]; then
+            echo "  [INFO] Preserving References to $CURRENT_CIF_TARGET/References"
+            mkdir -p "$CURRENT_CIF_TARGET/References"
+            mv References/* "$CURRENT_CIF_TARGET/References/" 2>/dev/null
+        fi
+        rm -rf References
+    fi
+fi
+
+# --- Resolution of Targets ---
+if [ "$INIT_MODE" = true ]; then
+    # 1. Clear temp directories
+    echo "  [CLEAN] Clearing contents of temp directories in soft_link/..."
+    rm -rf "$SPECTRUM_BASE/temp"/*
+    rm -rf "$CIF_BASE/temp"/*
+    rm -rf "$FIGURE_BASE/temp"/*
+    
+    # 2. Set targets to temp
+    SPECTRA_TARGET="$SPECTRUM_BASE/temp"
+    CIF_TARGET="$CIF_BASE/temp"
+    FIGURE_TARGET="$FIGURE_BASE/temp"
+else
+    # 1. Setup Spectra link
+    echo "" >&2
+    echo "--- Step 1: Setting up 'Spectra' link ---" >&2
+    SPECTRA_TARGET=$(select_from_dir "$SPECTRUM_BASE" "Select Spectra source directory" "Spectra_train")
+
+    # 2. Setup All_CIFs link
+    echo "" >&2
+    echo "--- Step 2: Setting up 'All_CIFs' link ---" >&2
+    CIF_TARGET=$(select_from_dir "$CIF_BASE" "Select All_CIFs source directory" "All_CIFs_AlN_4_types")
+
+    # 3. Setup figure/real_data link
+    echo "" >&2
+    echo "--- Step 3: Setting up 'figure/real_data' link ---" >&2
+    FIGURE_TARGET=$(select_from_dir "$FIGURE_BASE" "Select figure/real_data source directory" "Spectra_train")
+
+    # Confirmation
+    echo ""
+    echo "Proposed Links:"
+    echo "  Spectra         -> $SPECTRA_TARGET"
+    echo "  All_CIFs        -> $CIF_TARGET"
+    echo "  figure/real_data -> $FIGURE_TARGET"
+    echo ""
+    read -p "Apply these changes? [y/N]: " confirm
+    if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
+        echo "Setup cancelled."
+        exit 0
+    fi
+fi
+
+# --- Link Application ---
 echo ""
 echo "Creating symbolic links..."
 
-# Before switching All_CIFs, check if we need to save current Models/References
-if [ -L "All_CIFs" ]; then
-    CURRENT_CIF_TARGET=$(readlink "All_CIFs")
-    # If Models is a real directory, move its contents to the current CIF target
-    if [ -d "Models" ] && [ ! -L "Models" ]; then
-        echo "  [INFO] Moving current Models and References to $CURRENT_CIF_TARGET/"
-        mkdir -p "$CURRENT_CIF_TARGET/Models"
-        mv Models/* "$CURRENT_CIF_TARGET/Models/" 2>/dev/null
-        rmdir Models
-    fi
-    # If References is a real directory, move its contents to the current CIF target
-    if [ -d "References" ] && [ ! -L "References" ]; then
-        echo "  [INFO] Moving current References to $CURRENT_CIF_TARGET/References"
-        mkdir -p "$CURRENT_CIF_TARGET/References"
-        mv References/* "$CURRENT_CIF_TARGET/References/" 2>/dev/null
-        rmdir References
-    fi
-fi
-
-# Novel-Space/Spectra
+# Essential Fix: Always rm -rf before linking to prevent subdirectory linking or broken link issues
+rm -rf "Spectra"
 ln -snf "$SPECTRA_TARGET" "Spectra"
 echo "  [OK] Created Spectra link."
 
-# Novel-Space/All_CIFs
+rm -rf "All_CIFs"
 ln -snf "$CIF_TARGET" "All_CIFs"
 echo "  [OK] Created All_CIFs link."
 
-# Novel-Space/Models and References
+# Novel-Space/Models and References: only link if they exist in the target
+rm -rf "Models"
 if [ -d "$CIF_TARGET/Models" ]; then
     ln -snf "$CIF_TARGET/Models" "Models"
     echo "  [OK] Linked existing Models from $CIF_TARGET."
 else
-    if [ -L "Models" ]; then
-        rm "Models"
-        echo "  [INFO] Removed Models link (no existing models for this CIF group)."
-    fi
+    echo "  [INFO] No existing Models for this CIF group."
 fi
 
+rm -rf "References"
 if [ -d "$CIF_TARGET/References" ]; then
     ln -snf "$CIF_TARGET/References" "References"
     echo "  [OK] Linked existing References from $CIF_TARGET."
 else
-    if [ -L "References" ]; then
-        rm "References"
-        echo "  [INFO] Removed References link (no existing references for this CIF group)."
-    fi
+    echo "  [INFO] No existing References for this CIF group."
 fi
 
 # Ensure figure directory exists
 mkdir -p figure
-# Novel-Space/figure/real_data
+rm -rf "figure/real_data"
 # The link is relative to Northern-Space/figure/
 ln -snf "../$FIGURE_TARGET" "figure/real_data"
 echo "  [OK] Created figure/real_data link."
