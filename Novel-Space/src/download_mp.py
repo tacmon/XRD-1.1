@@ -1,3 +1,18 @@
+import os
+import sys
+
+# Set working directory to project root for easy path access
+# Get the absolute path of the directory containing this script (src/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (Novel-Space/)
+base_dir = os.path.dirname(script_dir)
+# Change the current working directory to Novel-Space/
+os.chdir(base_dir)
+# Add the project root to sys.path so autoXRD can be imported
+root_dir = os.path.dirname(base_dir)
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
 from mp_api.client import MPRester
 
 # 将 YOUR_API_KEY 替换为您在官网获取的真实秘钥
@@ -10,8 +25,7 @@ with MPRester(api_key) as mpr:
     structure = mpr.get_structure_by_material_id(material_id)
     
     # 将结构对象导出为 CIF 文件
-    import os
-    output_dir = os.path.join(os.path.dirname(__file__), "All_CIFs")
+    output_dir = "All_CIFs"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     filename = os.path.join(output_dir, f"{material_id}.cif")

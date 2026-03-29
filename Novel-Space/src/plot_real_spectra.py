@@ -1,3 +1,18 @@
+import os
+import sys
+
+# Set working directory to project root for easy path access
+# Get the absolute path of the directory containing this script (src/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (Novel-Space/)
+base_dir = os.path.dirname(script_dir)
+# Change the current working directory to Novel-Space/
+os.chdir(base_dir)
+# Add the project root to sys.path so autoXRD can be imported
+root_dir = os.path.dirname(base_dir)
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
 """
 plot_real_spectra.py
 ====================
@@ -10,8 +25,6 @@ plot_real_spectra.py
     python plot_real_spectra.py
 """
 
-import os
-import sys
 
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -23,7 +36,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def load_spectrum(filepath, angle_grid):
     """
@@ -77,7 +90,7 @@ def load_spectrum(filepath, angle_grid):
     return intensity_interp
 
 def main():
-    os.chdir(script_dir)
+    
     
     spectra_dir = "Spectra"
     out_dir = os.path.join("figure", "real_data")

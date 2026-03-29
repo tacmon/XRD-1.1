@@ -1,8 +1,22 @@
+import os
+import sys
+
+# Set working directory to project root for easy path access
+# Get the absolute path of the directory containing this script (src/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (Novel-Space/)
+base_dir = os.path.dirname(script_dir)
+# Change the current working directory to Novel-Space/
+os.chdir(base_dir)
+# Add the project root to sys.path so autoXRD can be imported
+root_dir = os.path.dirname(base_dir)
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
 import pandas as pd
 import numpy as np
 import ast
 import re
-import os
 
 def parse_list_string(s):
     """

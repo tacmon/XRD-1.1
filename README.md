@@ -1,152 +1,97 @@
-# XRD-AutoAnalyzer-PyTorch 脚本使用说明
+# XRD-AutoAnalyzer-PyTorch 自动化分析工具箱
 
-本文档介绍了 `Novel-Space` 目录下 Python 脚本的功能和运行方法，该系统利用卷积神经网络（CNN）对 X 射线衍射（XRD）图谱进行自动化物相识别和量化分析。
+本项目是一个基于 PyTorch 和卷积神经网络（CNN）的 X 射线衍射（XRD）自动化分析平台。它能够实现从晶体结构下载、合成数据增强、模型训练到实验图谱自动识别的全流程工作流。
 
-参考代码：[https://github.com/morethankk/XRD-AutoAnalyzer-PyTorch-full](https://github.com/morethankk/XRD-AutoAnalyzer-PyTorch-full)
+---
 
-## 1. 结构与安装
+## 1. 项目架构与安装
 
-建议在环境根目录下运行以下命令以安装依赖库（如果尚未安装）：
+### 1.1 安装依赖
+在项目根目录下执行以下命令完成环境安装：
 ```bash
 pip install -e .
 ```
 
-所有的主要脚本均位于 `Novel-Space/` 目录下。运行前请务必先进入该文件夹：
-```bash
-cd Novel-Space
+### 1.2 目录结构
+经过优化，所有的执行脚本均存放在 `src/` 目录下，而数据与模型保持在工作区根部，结构如下：
+```text
+Novel-Space/
+├── src/            # 所有 Python 执行脚本
+├── All_CIFs -> ... # 当前使用的晶体结构库 (软链接)
+├── Spectra -> ...  # 待测/训练图谱目录 (软链接)
+├── Models -> ...   # 已训练的模型权重 (自动管理)
+├── References -> ..# 生成的参考相数据 (自动管理)
+├── figure/         # 可视化输出目录
+└── setup_links.sh  # 环境初始化与数据集切换工具
 ```
 
-### 1.1 环境初始化与软链接设置
-为了方便管理不同的数据集和输出路径，项目提供了一个自动化脚本 `setup_links.sh`。该脚本会引导您设置 `Spectra`、`All_CIFs` 和 `figure/real_data` 的软链接。
+---
+
+## 2. 环境管理：`setup_links.sh`
+
+为了支持在多套数据集（如不同的材料体系）之间无缝切换，本项目提供了强大的环境管理脚本。
 
 **运行方法**：
 ```bash
 ./setup_links.sh
 ```
-按照提示选择对应的目标文件夹（例如 `soft_link/Spectra_train`）即可完成配置。
 
-## 2. 核心脚本介绍
-
-### (1) `download_mp.py`
-**功能**：从 Materials Project 数据库下载指定材料的 CIF 晶体结构文件。
-**用法**：
-```bash
-python download_mp.py
-```
-- 运行后会有交互式提示 `输入ID：`，输入 MP ID（如 `1234` 代表 `mp-1234`）。
-- 默认保存到 `All_CIFs/` 目录。
-
-### (2) `construct_xrd_model.py`
-**功能**：生成扩增的虚拟 XRD 图谱训练集，并训练一个基于 PyTorch 的 CNN 模型。
-**用法**：
-```bash
-python construct_xrd_model.py [选项]
-```
-- **重要选项**：
-  - `--num_spectra=N`：每个物相生成的模拟图谱数（默认 50）。
-  - `--num_epochs=N`：训练轮数（默认 50）。
-  - `--min_angle=N` / `--max_angle=N`：2-theta 范围（默认 20.0 - 60.0）。
-- **输出**：训练好的模型文件 `Model.pth`。
-
-### (3) `construct_pdf_model.py`
-**功能**：生成模拟的对分布函数（PDF）图谱，并训练独立的 PDF-CNN 模型。
-**用法**：
-```bash
-python construct_pdf_model.py [选项]
-```
-- **前提**：目录下需已存在 `Model.pth`，脚本会将其重命名并存放到 `Models/` 目录。
-
-### (4) `run_CNN.py`
-**功能**：使用训练好的 PyTorch 模型，对 `Spectra/` 目录下的测试图谱进行晶相识别和推断。
-**用法**：
-```bash
-python run_CNN.py [选项]
-```
-- **重要选项**：
-  - `--max_phases=N`：最大识别物相数（默认 3）。
-  - `--min_conf=N`：最低置信度阈值（默认 40.0）。
-  - `--inc_pdf`：结合 PDF 模型进行集成预测。
-  - `--plot`：显示物相匹配的可视化图表。
-  - `--weights`：输出预测物相的质量分数。
-- **输出**：预测结果保存至 `result.csv`。
-
-## 3. 辅助与工具脚本
-
-### (5) `generate_theoretical_spectra.py`
-**功能**：基于 `References/` 中的 CIF 生成平滑的理论 XRD 参考图谱。
-**用法**：
-```bash
-python generate_theoretical_spectra.py
-```
-
-### (6) `plot_real_spectra.py`
-**功能**：读取 `Spectra/` 下的所有实验数据，按模型基准（如 20-60°, 4501点）进行插值对齐 and 归一化，并输出可视化曲线。
-**用法**：
-```bash
-python plot_real_spectra.py
-```
-- **输出**：图像保存在 `figure/real_data/` 目录下。
-
-### (7) `extract_sample_from_npy.py`
-**功能**：从 `XRD.npy` 训练数据中提取特定的物相（如 CrSiTe3, AlN, Si 等）原始图谱样本，并保存为 `.txt` 格式到 `Spectra/` 目录下。这通常用于验证模型对于训练集中“已知”数据的识别精度。
-**用法**：
-```bash
-python extract_sample_from_npy.py
-```
-- **注意**：需要在脚本中修改 `indices` 或变量以针对不同的物相进行提取。
-- **输出**：`.txt` 数据文件保存在 `Spectra/` 目录下。
-
-### (8) `make_gifs.py`
-**功能**：将 `figure/real_data/` 子目录下的多张图谱（如 AlN, BST, CST 等）自动合成为动态 GIF，便于观察识别过程或物相变化。
-**用法**：
-```bash
-python make_gifs.py
-```
-- **输出**：生成的 GIF 文件保存在 `figure/real_data/gif/` 目录下。
-
-### (9) `process_results.py`
-**功能**：对 `run_CNN.py` 生成的 `result.csv` 进行后处理。允许用户选择一个或多个“主要物质”，脚本将筛选出每一行中置信度最高且大于 50% 的物质。如果最高置信度的物质属于“主要物质”列表，则保留；否则标记为“未识别”。
-**用法**：
-```bash
-python process_results.py
-```
-- **交互**：运行后会列出所有出现的标签，输入对应编号（多个编号用逗号或空格分隔）选择主要物质。
-- **输出**：简化后的结果保存至 `processed_result.csv`。
-
-### (10) `extract_ranges.py`
-**功能**：快速遍历 `Spectra/` 目录下的所有数据文件，提取由于原始实验设置而导致的 2-theta 扫描角度范围（最小值和最大值）。这有助于在运行 `run_CNN.py` 前核实数据是否覆盖了模型所需的角度区间。
-**用法**：
-```bash
-python extract_ranges.py
-```
-- **输出**：结果保存至 `angle_ranges.csv`。
-
-## 4. 典型工作流示例
-
-为了确保系统正确运行，建议遵循以下流程：
-
-1. **进入工作目录**：`cd Novel-Space`
-2. **准备参考文件**：将相关的 CIF 文件放置于 `References/` 或使用 `download_mp.py` 获取。
-3. **训练模型**：运行 `python construct_xrd_model.py` 生成训练模型 `Model.pth`。
-4. **准备待测数据**：确保实验图谱以 `.txt` 或 `.xy` 格式存放在 `Spectra/` 目录下（或其链接的实际目录）。
-5. **执行预测**：运行 `python run_CNN.py --plot` 进行晶相识别，并生成包含可视化对比图的 `result.csv`。
-6. **分析与可视化**：
-   - 运行 `python plot_real_spectra.py` 预备并导出所有待测数据的曲线。
-   - 运行 `python make_gifs.py` 合成动态图，直观对比识别效果。
-7. **结果后处理**：运行 `python process_results.py` 筛选特定的主要物质，生成更易读的 `processed_result.csv`。
-8. **数据提取（可选）**：运行 `python extract_sample_from_npy.py` 提取训练集内样本供对比分析。
+**功能特性**：
+- **数据集切换**：快速更改 `Spectra` 和 `All_CIFs` 指向的目标文件夹。
+- **自动保存 (Auto-Preserve)**：在切换数据集前，脚本会自动检测并移动当前工作区中的 `Models/` 和 `References/` 到对应的原始备份目录，防止模型被覆盖。
+- **状态恢复 (Auto-Restore)**：当您切回之前训练过的数据集时，相应的模型和参考数据会被自动链接回工作区。
 
 ---
-> [!IMPORTANT]
-> 如果遇到问题，请确保在“次级目录”运行，即 `Novel-Space` 目录或者 `Example` 目录，而不是项目根目录。
-> 若遇到 `AssertionError: Measured spectrum does not span the specified two-theta range!`，请使用 `extract_ranges.py` 核查您的数据范围并相应调整 `--min_angle` 和 `--max_angle` 参数。
 
+## 3. 核心工作流
 
-## 5. 关联项目
+### 3.1 数据准备：`src/download_mp.py`
+从 Materials Project 下载指定 ID 的晶体结构。
+```bash
+python src/download_mp.py
+```
+*提示：下载的 CIF 会自动保存到当前选定的 `All_CIFs/` 目录中。*
 
-本项目是系列工具的一部分，您可以点击下方链接跳转到其他版本：
+### 3.2 训练阶段：`src/construct_xrd_model.py`
+基于 `All_CIFs/` 中的结构生成增强的模拟谱图并训练 CNN 模型。
+```bash
+python src/construct_xrd_model.py --num_spectra=50 --num_epochs=50 --save
+```
+- `--save`: 同步保存生成的增强数据集 `XRD.npy`。
+- **输出**: 根目录下生成 `Model.pth`。
 
-- [XRD-1.0](https://github.com/tacmon/XRD-1.0)：初始版本，包含完整的辅助脚本和数据处理工具。
-- [XRD-1.1](https://github.com/tacmon/XRD-1.1)：（当前项目）精简版，优化了脚本结构并增加了环境自动初始化工作流。
+### 3.3 推理阶段：`src/run_CNN.py`
+对 `Spectra/` 中的实验数据进行相位识别。
+```bash
+python src/run_CNN.py --plot --weights
+```
+- `--plot`: 自动生成实验谱与匹配相的对比图。
+- `--weights`: 执行定量分析，输出质量分数。
+- **输出**: 生成 `result.csv`。
 
+---
 
+## 4. 辅助工具箱
+
+| 脚本 | 功能描述 |
+| :--- | :--- |
+| `src/construct_pdf_model.py` | 训练针对 PDF (Pair Distribution Function) 的模型。 |
+| `src/plot_real_spectra.py` | 将所有实验谱图标准化并批量输出为可视化 PNG 图像。 |
+| `src/make_gifs.py` | 将 `figure/` 下的时间序列图像合成动态 GIF 动画。 |
+| `src/process_results.py` | 对 `result.csv` 进行后处理，筛选指定的主要物质标签。 |
+| `src/extract_ranges.py` | 扫描 `Spectra/` 目录，输出所有实验数据的 2-theta 覆盖范围。|
+| `src/generate_theoretical_spectra.py` | 基于 CIF 计算理论精确的 XRD 谱，作为识别参考。 |
+
+---
+
+## 5. 开发者备注：路径自动化
+
+本项目所有的 Python 脚本都具备 **Path-Agnostic** 特性。
+- 脚本头部集成了自动解析逻辑，无论您是在项目根目录还是 `Novel-Space/` 目录下运行，脚本都会自动将工作路径定位到 `Novel-Space/`。
+- 这确保了如 `All_CIFs/` 或 `Models/` 等相对路径在任何运行环境下都能被正确访问。
+
+---
+
+## 6. 关联项目
+- [XRD-1.0](https://github.com/tacmon/XRD-1.0)：原始版本。
+- [XRD-1.1](https://github.com/tacmon/XRD-1.1)：当前优化版，增强了路径管理与数据集自动化。

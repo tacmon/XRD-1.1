@@ -95,6 +95,25 @@ fi
 echo ""
 echo "Creating symbolic links..."
 
+# Before switching All_CIFs, check if we need to save current Models/References
+if [ -L "All_CIFs" ]; then
+    CURRENT_CIF_TARGET=$(readlink "All_CIFs")
+    # If Models is a real directory, move its contents to the current CIF target
+    if [ -d "Models" ] && [ ! -L "Models" ]; then
+        echo "  [INFO] Moving current Models and References to $CURRENT_CIF_TARGET/"
+        mkdir -p "$CURRENT_CIF_TARGET/Models"
+        mv Models/* "$CURRENT_CIF_TARGET/Models/" 2>/dev/null
+        rmdir Models
+    fi
+    # If References is a real directory, move its contents to the current CIF target
+    if [ -d "References" ] && [ ! -L "References" ]; then
+        echo "  [INFO] Moving current References to $CURRENT_CIF_TARGET/References"
+        mkdir -p "$CURRENT_CIF_TARGET/References"
+        mv References/* "$CURRENT_CIF_TARGET/References/" 2>/dev/null
+        rmdir References
+    fi
+fi
+
 # Novel-Space/Spectra
 ln -snf "$SPECTRA_TARGET" "Spectra"
 echo "  [OK] Created Spectra link."
@@ -102,6 +121,27 @@ echo "  [OK] Created Spectra link."
 # Novel-Space/All_CIFs
 ln -snf "$CIF_TARGET" "All_CIFs"
 echo "  [OK] Created All_CIFs link."
+
+# Novel-Space/Models and References
+if [ -d "$CIF_TARGET/Models" ]; then
+    ln -snf "$CIF_TARGET/Models" "Models"
+    echo "  [OK] Linked existing Models from $CIF_TARGET."
+else
+    if [ -L "Models" ]; then
+        rm "Models"
+        echo "  [INFO] Removed Models link (no existing models for this CIF group)."
+    fi
+fi
+
+if [ -d "$CIF_TARGET/References" ]; then
+    ln -snf "$CIF_TARGET/References" "References"
+    echo "  [OK] Linked existing References from $CIF_TARGET."
+else
+    if [ -L "References" ]; then
+        rm "References"
+        echo "  [INFO] Removed References link (no existing references for this CIF group)."
+    fi
+fi
 
 # Ensure figure directory exists
 mkdir -p figure
@@ -112,4 +152,4 @@ echo "  [OK] Created figure/real_data link."
 
 echo ""
 echo "Setup complete! Verifying links:"
-ls -ld Spectra All_CIFs figure/real_data
+ls -ld Spectra All_CIFs Models References figure/real_data 2>/dev/null

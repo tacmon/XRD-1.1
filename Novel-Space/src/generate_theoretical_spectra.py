@@ -1,3 +1,18 @@
+import os
+import sys
+
+# Set working directory to project root for easy path access
+# Get the absolute path of the directory containing this script (src/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (Novel-Space/)
+base_dir = os.path.dirname(script_dir)
+# Change the current working directory to Novel-Space/
+os.chdir(base_dir)
+# Add the project root to sys.path so autoXRD can be imported
+root_dir = os.path.dirname(base_dir)
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
 """
 generate_theoretical_spectra.py
 ===============================
@@ -15,14 +30,12 @@ generate_theoretical_spectra.py
     python generate_theoretical_spectra.py
 """
 
-import os
-import sys
 import numpy as np
 
 import pymatgen.core as mg
 from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def apply_broadening(x_grid, peaks_x, peaks_y, fwhm=0.1):
     """
@@ -39,7 +52,7 @@ def apply_broadening(x_grid, peaks_x, peaks_y, fwhm=0.1):
     return y_profile
 
 def main():
-    os.chdir(script_dir)
+    
     
     ref_dir = "References"
     spectra_dir = "Spectra"

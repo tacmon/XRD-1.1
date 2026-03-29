@@ -1,4 +1,18 @@
 import os
+import sys
+
+# Set working directory to project root for easy path access
+# Get the absolute path of the directory containing this script (src/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (Novel-Space/)
+base_dir = os.path.dirname(script_dir)
+# Change the current working directory to Novel-Space/
+os.chdir(base_dir)
+# Add the project root to sys.path so autoXRD can be imported
+root_dir = os.path.dirname(base_dir)
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
 import imageio.v2 as imageio
 import re
 
@@ -52,7 +66,7 @@ def create_gif(directory, output_filename, duration):
     print(f"Successfully saved {output_filename} with frame duration {duration_ms}ms")
 
 if __name__ == "__main__":
-    base_dir = "/root/xrd/XRD-1.0/Novel-Space/figure/real_data"
+    base_dir = "figure/real_data"
     
     # Task (1): 0.25s per frame
     create_gif(os.path.join(base_dir, "参考"), os.path.join(base_dir, "gif/参考.gif"), duration=0.3)
