@@ -97,17 +97,59 @@ fi
 if [ "$INIT_MODE" = true ]; then
     # 1. Ensure base directories and temp folders exist
     echo "  [INIT] Ensuring directory structure exists in $BASE_DIR/..."
+    # 1. Ensure base directories exist
     mkdir -p "$SPECTRUM_BASE/temp"
     mkdir -p "$CIF_BASE/temp"
     mkdir -p "$FIGURE_BASE/temp"
 
-    # 2. Clear temp directories
+    # 2. Workspace Promotion Check (Protect Temp Experiment)
+    if [ -L "All_CIFs" ]; then
+        CURRENT_CIF_TARGET=$(readlink -f "All_CIFs")
+        if [[ "$CURRENT_CIF_TARGET" == *"temp"* ]]; then
+            # Check if there is anything worth saving
+            if [ -d "Models" ] || [ -d "References" ] || [ "$(ls -A All_CIFs 2>/dev/null)" ] || [ "$(ls -A Spectra 2>/dev/null)" ]; then
+                echo -e "\n\033[0;33m[SENSE] Training results detected in your current 'temp' workspace!\033[0m"
+                echo "Would you like to (b)ackup/promote this session to a named dataset, (d)elete and reset, or (a)bort?"
+                read -p "Your choice [b/d/a]: " init_choice
+                
+                if [[ "$init_choice" =~ ^[Bb]$ ]]; then
+                    read -p "Enter a name for this new dataset (e.g., AlN_Optimized_V1): " NEW_VERSION_NAME
+                    if [ -z "$NEW_VERSION_NAME" ]; then echo "Invalid name. Aborting."; exit 1; fi
+                    if [ -d "$CIF_BASE/$NEW_VERSION_NAME" ]; then echo "Error: Name already exists. Aborting."; exit 1; fi
+                    
+                    echo "  [PROMOTE] Migrating temp workspace to $NEW_VERSION_NAME..."
+                    # Create new physical structures
+                    mkdir -p "$SPECTRUM_BASE/$NEW_VERSION_NAME"
+                    mkdir -p "$CIF_BASE/$NEW_VERSION_NAME"
+                    mkdir -p "$FIGURE_BASE/$NEW_VERSION_NAME"
+                    
+                    # Atomic move from current Novel-Space pointers
+                    if [ -d "Models" ] && [ ! -L "Models" ]; then mv Models "$CIF_BASE/$NEW_VERSION_NAME/"; fi
+                    if [ -d "References" ] && [ ! -L "References" ]; then mv References "$CIF_BASE/$NEW_VERSION_NAME/"; fi
+                    
+                    # Move temp files to their new home
+                    mv "$SPECTRUM_BASE/temp"/* "$SPECTRUM_BASE/$NEW_VERSION_NAME/" 2>/dev/null
+                    mv "$CIF_BASE/temp"/* "$CIF_BASE/$NEW_VERSION_NAME/" 2>/dev/null
+                    mv "$FIGURE_BASE/temp"/* "$FIGURE_BASE/$NEW_VERSION_NAME/" 2>/dev/null
+                    
+                    echo -e "\033[0;32m[OK]\033[0m Workspace promoted to $CIF_BASE/$NEW_VERSION_NAME"
+                elif [[ "$init_choice" =~ ^[Aa]$ ]]; then
+                    echo "Setup aborted."
+                    exit 0
+                else
+                    echo "  [INFO] User chose to delete temp results."
+                fi
+            fi
+        fi
+    fi
+
+    # 3. Clear temp directories (Safe Reset)
     echo "  [CLEAN] Clearing contents of temp directories..."
     rm -rf "$SPECTRUM_BASE/temp"/*
     rm -rf "$CIF_BASE/temp"/*
     rm -rf "$FIGURE_BASE/temp"/*
     
-    # 3. Set targets to temp
+    # 4. Set targets to temp
     SPECTRA_TARGET="$SPECTRUM_BASE/temp"
     CIF_TARGET="$CIF_BASE/temp"
     FIGURE_TARGET="$FIGURE_BASE/temp"
