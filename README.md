@@ -1,5 +1,7 @@
 # XRD-AutoAnalyzer-PyTorch 自动化分析工具箱
 
+[简体中文](README.md) | [English](README_en.md)
+
 本项目是一个基于 PyTorch 和卷积神经网络（CNN）的 X 射线衍射（XRD）自动化分析平台。它能够实现从晶体结构下载、合成数据增强、模型训练到实验图谱自动识别的全流程工作流。
 
 ---
@@ -12,32 +14,46 @@
 pip install -e .
 ```
 
-### 1.2 目录结构
-经过优化，所有的执行脚本均存放在 `src/` 目录下，而数据与模型保持在工作区根部，结构如下：
-```text
-Novel-Space/
-├── src/            # 所有 Python 执行脚本
-├── All_CIFs -> ... # 当前使用的晶体结构库 (软链接)
-├── Spectra -> ...  # 待测/训练图谱目录 (软链接)
-├── Models -> ...   # 已训练的模型权重 (自动管理)
-├── References -> ..# 生成的参考相数据 (自动管理)
-├── figure/         # 可视化输出目录
-└── setup_links.sh  # 环境初始化与数据集切换工具
+---
+
+## 2. 🚀 快速开始 (Getting Started)
+
+由于为了保持仓库整洁，本项目在 Git 中忽略了所有的符号链接、环境变量和本地数据集。首次使用（或重新克隆）后，请按照以下步骤初始化您的环境：
+
+### Step 1: 配置 API 密钥
+在 `Novel-Space/` 目录下创建一个名为 `.env` 的文件，并写入您的 Materials Project API 密钥：
+```bash
+# Novel-Space/.env
+MP_API_KEY=您的真实API密钥
 ```
+
+### Step 2: 初始化环境链接
+在 `Novel-Space/` 目录下运行环境设置脚本。建议第一次使用时使用 `--init` 参数来准备 `temp` 工作区：
+```bash
+cd Novel-Space
+./setup_links.sh --init
+```
+这会自动创建指向 `soft_link/` 的 `All_CIFs`、`Spectra` 和 `figure` 等符号链接，并确保它们指向干净、独立的实验区。
+
+### Step 3: 开始数据采集推理
+环境初始化后，您可以按顺序执行：
+1. **下载结构**：`python src/download_mp.py`
+2. **生成参考**：`python src/construct_xrd_model.py`
+3. **运行模型**：`python src/run_CNN.py`
 
 ---
 
-## 2. 环境管理：`setup_links.sh`
+## 3. 环境管理：`setup_links.sh`
 
 为了支持在多套数据集之间无缝切换，本项目提供了强大的环境管理脚本，支持 **交互模式** 与 **自动化初始化模式**。
 
-### 2.1 基础用法
+### 3.1 基础用法
 ```bash
 ./setup_links.sh          # 交互式选择数据集
 ./setup_links.sh --init   # 自动化初始化 (重置环境)
 ```
 
-### 2.2 功能特性
+### 3.2 功能特性
 - **初始化模式 (--init)**：
     - **一键清空**：递归删除 `soft_link/All_CIFs/temp/`、`Spectra/temp/` 和 `figure/temp/` 目录下的所有残留内容。
     - **快速重置**：自动将所有软链接指向上述 `temp` 目录，适合开启全新的实验。
@@ -51,16 +67,16 @@ Novel-Space/
 
 ---
 
-## 3. 核心工作流
+## 4. 核心工作流
 
-### 3.1 数据准备：`src/download_mp.py`
-从 Materials Project 下载指定 ID 的晶体结构。
+### 4.1 数据准备：`src/download_mp.py`
+从 Materials Project 下载指定 ID 的晶体结构.
 ```bash
 python src/download_mp.py
 ```
 *提示：下载的 CIF 会自动保存到当前选定的 `All_CIFs/` 目录中。*
 
-### 3.2 训练阶段：`src/construct_xrd_model.py`
+### 4.2 训练阶段：`src/construct_xrd_model.py`
 基于 `All_CIFs/` 中的结构生成增强的模拟谱图并训练 CNN 模型。
 ```bash
 python src/construct_xrd_model.py --num_spectra=50 --num_epochs=50 --save
@@ -68,7 +84,7 @@ python src/construct_xrd_model.py --num_spectra=50 --num_epochs=50 --save
 - `--save`: 同步保存生成的增强数据集 `XRD.npy`。
 - **输出**: 根目录下生成 `Model.pth`。
 
-### 3.3 推理阶段：`src/run_CNN.py`
+### 4.3 推理阶段：`src/run_CNN.py`
 对 `Spectra/` 中的实验数据进行相位识别。
 ```bash
 python src/run_CNN.py --plot --weights
@@ -79,7 +95,7 @@ python src/run_CNN.py --plot --weights
 
 ---
 
-## 4. 辅助工具箱
+## 5. 辅助工具箱
 
 | 脚本 | 功能描述 |
 | :--- | :--- |
@@ -92,7 +108,7 @@ python src/run_CNN.py --plot --weights
 
 ---
 
-## 5. 开发者备注：路径自动化
+## 6. 开发者备注：路径自动化
 
 本项目所有的 Python 脚本都具备 **Path-Agnostic** 特性。
 - 脚本头部集成了自动解析逻辑，无论您是在项目根目录还是 `Novel-Space/` 目录下运行，脚本都会自动将工作路径定位到 `Novel-Space/`。
@@ -100,6 +116,6 @@ python src/run_CNN.py --plot --weights
 
 ---
 
-## 6. 关联项目
+## 7. 关联项目
 - [XRD-1.0](https://github.com/tacmon/XRD-1.0)：原始版本。
 - [XRD-1.1](https://github.com/tacmon/XRD-1.1)：当前优化版，增强了路径管理与数据集自动化。
