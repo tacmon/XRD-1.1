@@ -30,13 +30,16 @@ if [ -L "All_CIFs" ]; then
     # Mandatory confirmation for any directory
     read -p "Are you SURE you want to delete all files in $TARGET_PATH? [y/N]: " confirm
     if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-        echo "Cleanup cancelled by user. Training aborted."
-        exit 1
+        echo "  [INFO] Cleanup skipped. Existing files in All_CIFs will be kept."
+    else
+        rm -rf All_CIFs/*
+        echo "  [OK] All_CIFs directory is now empty."
     fi
+else
+    # Not a symlink, perform standard cleanup
+    rm -rf All_CIFs/*
+    echo "  [OK] All_CIFs directory is now empty."
 fi
-
-rm -rf All_CIFs/*
-echo "  [OK] All_CIFs directory is now empty."
 
 # 3. Interactive Download Loop
 echo ""
