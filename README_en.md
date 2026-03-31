@@ -59,6 +59,22 @@ In this interactive menu, you can:
 ## 📖 3. For Developers
 
 *   **Path-Agnostic**: All our Python scripts are optimized. Whether you run them from the root or the `Novel-Space/` directory, the scripts will find the correct paths automatically.
-*   **Related Projects**: For original reference code, visit [XRD-1.0](https://github.com/tacmon/XRD-1.0).
+
+---
+
+## 4. Project Jumps
+
+This project is part of a series of tools. You can navigate to other versions using the links below:
+
+- [XRD-1.0](https://github.com/tacmon/XRD-1.0): Initial version with full auxiliary scripts and data processing tools.
+- [XRD-1.1](https://github.com/tacmon/XRD-1.1): (Current Project) Streamlined version with optimized script structure and automated environment initialization.
+- [xrd_server](https://github.com/tacmon/xrd_server): Server version providing online analysis and API services.
 
 This project aims to provide an efficient, robust, and enjoyable XRD analysis experience. If you have any suggestions, feel free to reach out!
+
+---
+
+> [!NOTE]
+> This project is developed and maintained with the assistance of **Google Gemini 3 Flash**.
+
+

@@ -59,6 +59,22 @@ cd Novel-Space
 ## 📖 3. 给开发者的话
 
 *   **路径自适应**：我们所有的 Python 脚本都经过了优化。无论您是在项目根目录运行还是在 `Novel-Space/` 下运行，脚本都能自己找到正确的路径。
-*   **关联项目**：如果您需要参考原始代码，可以访问 [XRD-1.0](https://github.com/tacmon/XRD-1.0)。
+
+---
+
+## 4. 项目之间的跳转
+
+本项目是系列工具的一部分，您可以点击下方链接跳转到其他版本：
+
+- [XRD-1.0](https://github.com/tacmon/XRD-1.0)：初始版本，包含完整的辅助脚本和数据处理工具。
+- [XRD-1.1](https://github.com/tacmon/XRD-1.1)：（当前项目）精简版，优化了脚本结构并增加了环境自动初始化工作流。
+- [xrd_server](https://github.com/tacmon/xrd_server)：服务器版本，提供在线分析与 API 服务。
 
 本项目致力于为您打造一个高效、稳健且充满乐趣的 XRD 分析体验。如果有任何建议，欢迎随时交流！
+
+---
+
+> [!NOTE]
+> 本项目由 **Google Gemini 3 Flash** 大模型辅助开发与维护。
+
+
