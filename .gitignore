@@ -13,8 +13,9 @@ __pycache__/
 *.npy
 Novel-Space/temp/
 Novel-Space/angle_ranges.csv
-Novel-Space/result.csv
-Novel-Space/result_processed.csv
+result.csv
+processed_result.csv
+result_processed.csv
 .DS_Store
 
 # 数据存放 & 软链接 (不提交原始数据和本地链接)
